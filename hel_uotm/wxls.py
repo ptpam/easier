@@ -7,18 +7,21 @@ gen_path = input("Enter the path: ")
 define_file = open(gen_path , "r", encoding='ANSI')
 
 def write_cells(row,column,write_list):
-    for w in range(5):
+    for w in range(len(write_list)):
         worksheet.write(row, column+w , write_list[w])
+def write_max(letter, offset, column):
+    cell_val = xl_rowcol_to_cell(1, column)
+    worksheet.write_formula(cell_val, '=MAX('+letter+'3:'+ letter + str(offset) +')', cell_format1)
 
 def write_formulas(row, column, offset):
     cell_val = xl_rowcol_to_cell(row, column)
-    cell_val1 = xl_rowcol_to_cell(row, column-2-offset)
-    cell_val2 = xl_rowcol_to_cell(row, column-1-offset)
+    cell_val1 = xl_rowcol_to_cell(row, column-offset-1)
+    cell_val2 = xl_rowcol_to_cell(row, column-offset)
     worksheet.write_formula(cell_val, '=SQRT(('+cell_val1+'*'+cell_val1+')+('+cell_val2+'*' + cell_val2 +'))', cell_format1)
 
 def write_last_part(row, column):
-    write_formulas(row, column, 0)
-    write_formulas(row, column+1, 3)
+    write_formulas(row, column, 4)
+    write_formulas(row, column+1, 2)
     i = 0
     for d in hel_check_list[row-2]:
         worksheet.write(row, column+2 + i , float(d))
@@ -46,7 +49,9 @@ for ll in define_file:
         f_check = re.findall(r'(.*)\n+?', file_ext)
         if f_check:
             file_ext = f_check[0]
-        workbook = xlsxwriter.Workbook(file_pth+"\\conv\\"+file_ext +"_"+ f_elem +".xlsx")
+
+        xls_path = file_pth+"\\conv\\"+file_ext +"_"+ f_elem +".xlsx"
+        workbook = xlsxwriter.Workbook(xls_path)
         worksheet = workbook.add_worksheet('Data')
         cell_format1 = workbook.add_format()
         cell_format1.set_align('center')
@@ -97,7 +102,7 @@ for ll in define_file:
                 for l in line_list:
                     worksheet.write(row, column , l)
                     column += 1
-                write_list = ["T","M","X","Y","Z"]
+                write_list = ["T","M","X","Y","Z", "T_max", "M_max"]
                 write_cells(row, column,write_list)
                 row += 1
             elif re.findall(r'rad', line):
@@ -112,4 +117,6 @@ for ll in define_file:
                 write_cells(row, column,write_list)
                 row += 1
         print(file_ext +"_"+ f_elem +".xlsx is written")
+        write_max("O", row, column+5)
+        write_max("P", row, column+6)
         workbook.close()
