@@ -1,0 +1,16 @@
+ SAP2000 v16.0.0 Plus (Analysis Build 9138/32)                                  
+ File: E:\1_Yayýnlar Guncel\1_...frekans\fx_fr\Barrel\Rmin_Rmax_.4\32\sap\32.OUT
+                                                                     
+                                                                       
+
+ D I S P L A C E M E N T   D E G R E E S   O F   F R E E D O M
+
+         (A) = Active DOF, equilibrium equation
+         (-) = Restrained DOF, reaction computed
+         (+) = Constrained DOF
+         (>) = External substructure DOF
+         ( ) = Null DOF
+
+  JOINTS              UX  UY  UZ  RX  RY  RZ
+       1               -   -   -   -   -   -
+       2 TO      33    A   A   A   A   A   A

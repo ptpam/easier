@@ -1,0 +1,76 @@
+
+
+ SAP2000 v16.0.0 Plus (Analysis Build 9138/32)
+ File: E:\1_Yayýnlar Guncel\1_...ekans\fx_fr\Barrel\Rmin_Rmax_.6\240\sap\240.LOG
+
+
+
+
+ B E G I N   A N A L Y S I S                                2018/04/21  12:41:04
+
+
+ RUNNING ANALYSIS WITHIN THE GUI PROCESS
+ USING THE ADVANCED SOLVER (PROVIDES LIMITED INSTABILITY INFORMATION)
+
+ NUMBER OF JOINTS                          =         241
+    WITH RESTRAINTS                        =           1
+ NUMBER OF FRAME/CABLE/TENDON ELEMENTS     =         240
+ NUMBER OF LOAD PATTERNS                   =           3
+ NUMBER OF ACCELERATION LOADS              =           6
+ NUMBER OF LOAD CASES                      =           1
+
+
+ E L E M E N T   F O R M A T I O N                                      12:41:04
+
+
+
+ L I N E A R   E Q U A T I O N   S O L U T I O N                        12:41:04
+
+ FORMING STIFFNESS AT ZERO (UNSTRESSED) INITIAL CONDITIONS
+
+ TOTAL NUMBER OF EQUILIBRIUM EQUATIONS     =        1440
+ NUMBER OF NON-ZERO STIFFNESS TERMS        =       13644
+
+ NUMBER OF EIGENVALUES BELOW SHIFT         =           0
+
+
+ E I G E N   M O D A L   A N A L Y S I S                                12:41:04
+
+ CASE: MODAL
+
+ USING STIFFNESS AT ZERO (UNSTRESSED) INITIAL CONDITIONS
+
+ NUMBER OF STIFFNESS DEGREES OF FREEDOM    =        1440
+ NUMBER OF MASS DEGREES OF FREEDOM         =         720
+ MAXIMUM NUMBER OF EIGEN MODES SOUGHT      =          12
+ MINIMUM NUMBER OF EIGEN MODES SOUGHT      =           1
+ NUMBER OF RESIDUAL-MASS MODES SOUGHT      =           0
+ NUMBER OF SUBSPACE VECTORS USED           =          24
+ RELATIVE CONVERGENCE TOLERANCE            =    1.00E-09
+
+ FREQUENCY SHIFT  (CENTER) (CYC/TIME)      =     .000000
+ FREQUENCY CUTOFF (RADIUS) (CYC/TIME)      =  -INFINITY-
+ ALLOW AUTOMATIC FREQUENCY SHIFTING        =         YES
+
+
+ Original stiffness at shift : EV= 0.0000000E+00, f=     .000000, T=  -INFINITY-
+ Number of eigenvalues below shift =      0
+ Found mode      1 of     12:  EV= 2.3630910E+05, f=   77.367819, T=    0.012925
+ Found mode      2 of     12:  EV= 2.3779017E+05, f=   77.609893, T=    0.012885
+ Found mode      3 of     12:  EV= 6.4566647E+05, f=  127.886367, T=    0.007819
+ Found mode      4 of     12:  EV= 8.3866077E+05, f=  145.751588, T=    0.006861
+ Found mode      5 of     12:  EV= 3.4258687E+06, f=  294.581513, T=    0.003395
+ Found mode      6 of     12:  EV= 3.4941475E+06, f=  297.502589, T=    0.003361
+ Found mode      7 of     12:  EV= 5.3099198E+06, f=  366.744923, T=    0.002727
+ Found mode      8 of     12:  EV= 6.8936226E+06, f=  417.872587, T=    0.002393
+ Found mode      9 of     12:  EV= 1.0403975E+07, f=  513.357336, T=    0.001948
+ Found mode     10 of     12:  EV= 1.1422552E+07, f=  537.900205, T=    0.001859
+ Found mode     11 of     12:  EV= 1.3293794E+07, f=  580.289364, T=    0.001723
+ Found mode     12 of     12:  EV= 1.4210735E+07, f=  599.968431, T=    0.001667
+
+ NUMBER OF EIGEN MODES FOUND               =          12
+ NUMBER OF ITERATIONS PERFORMED            =           5
+ NUMBER OF STIFFNESS SHIFTS                =           0
+
+
+ A N A L Y S I S   C O M P L E T E                          2018/04/21  12:41:04
