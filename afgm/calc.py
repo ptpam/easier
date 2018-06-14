@@ -9,38 +9,54 @@ define_file = open(gen_path , "r")
 line = define_file.readline()
 llist = re.split(r'\t+', line)
 check_func = False
+check_h = False
+
 def upper_bupper(ub, l, u):
-    if ub == 'f':
+    if ub == 'd':
+        return  l, u 
+    else:
         diff = abs(a-b)
         return diff/l, diff/u
-    else:
-        return  l, u    
-
-if llist[0] == 'f':
-    check_func = True
 
 def turn_length(tl, value ,delta):
     if tl == 't':
         return 2*pi*value, pi/delta   
     else:    
-        return value, 1/delta
+        return value, delta
 
+val_funct = llist[0]
 a = float(llist[1])
 b = float(llist[2])
 n = float(llist[3])
 limit, inc_calc = turn_length(llist[4],float(llist[5]),float(llist[6]))
-lower_bound, upper_bound = upper_bupper(llist[0],float(llist[7]),float(llist[8]))
+lower_bound, upper_bound = upper_bupper(val_funct,float(llist[7]),float(llist[8]))
 delta_limit = limit/float(llist[9])
+upper_limit = limit
 
-print(str(a) + " " + str(b)+ " " + str(n) + " " + str(limit)+ " " +str(inc_calc) + " " +str(lower_bound) + " " +str(upper_bound))
-#sys.exit()
+add_x = 0
+count = 0
+if val_funct == 'f':
+    check_func = True
+elif val_funct == 'h':
+    upper_limit *= 0.5
+    count = -limit/2
+    add_x = 1/2
+    check_h = True
+
+check_d = not(check_func or check_h)
+print("a b n upper_limit delta lower_bound upper_bound")
+print(str(a) + " " + str(b)+ " " + str(n) + " " + str(upper_limit)+ " " +str(inc_calc) + " " +str(lower_bound) + " " +str(upper_bound))
+
 phi = Symbol('phi')
-y = (a-b)*((phi/limit)**n) + b
+
+def define_funct(a,b):
+    y = (a-b)*(((phi/limit) + add_x)**n) + b
+    f = lambdify(phi, y, 'numpy')
+    return y, f
+
+y, f = define_funct(a,b)
+
 yprime = y.diff(phi)
-
-
-
-f = lambdify(phi, y, 'numpy')
 fprime = lambdify(phi, yprime, 'numpy')
 
 def conv_deg(slope):
@@ -50,7 +66,7 @@ def calc_norm(count, increment, funct):
     square = funct(count)
     count += increment
     circle = funct(count)
-    if not check_func:
+    if check_d:
         square = conv_deg(square)
         circle = conv_deg(circle)
     diff = abs(square-circle)
@@ -59,7 +75,7 @@ def calc_norm(count, increment, funct):
     return float(diff)
 
 def found_angle(count, increment):
-    if check_func:
+    if not check_d:
         norm = calc_norm(count, increment, f)
     else:
         norm = calc_norm(count, increment, fprime)
@@ -72,10 +88,9 @@ def found_angle(count, increment):
 
 angle_list = list()
 increment = inc_calc
-count = 0
-#count = 0.0001
+
 inc_list = list()
-while count < limit:
+while count < upper_limit:
     angle_list.append(count)
     inc = found_angle(count,increment)
     if inc > delta_limit:
@@ -83,25 +98,56 @@ while count < limit:
     inc_list.append(inc)
     count += inc
 
-angle_list.append(limit)
+angle_list.append(upper_limit)
 
 length = len(angle_list)-1
-#norm_list= [(float((f(angle_list[i+1])-f(angle_list[i]))/f(angle_list[i+1])))*100 for i in range(length)]
 
-norm_list= [abs(f(angle_list[i+1]) - f(angle_list[i])) for i in range(length)]
+funct_list = [f(a) for a in angle_list]
+norm_list= [abs(funct_list[i+1] - funct_list[i]) for i in range(length)]
+norm_list_x = [abs(angle_list[i+1] - angle_list[i]) for i in range(length)]
+
+def write_title(title_list, file):
+    for title in title_list:
+        file.write(title + "\t")
+    file.write("\n\n")    
+
+def write_list(data_list, file_title, title_list, dlength):
+    file = open(file_title,'w') 
+    write_title(title_list, file)
+    length = int(len(data_list)/2)
+    for i in range(dlength):
+        for j in range(length):
+            for k in range(data_list[2*j+1]):
+                file.write("{0:0.10f}".format(data_list[j*2][i+k])+ "\t\t")
+        file.write("\n")        
 
 file = open('testfile.txt','w') 
-file.write("point \t"+" difference y\t"+"nod1\t"+"nod2\t"+"increment\n\n")
-for i in range(length):
-    file.write(str(i+1) + " \t" + str(round(norm_list[i], 5)) +  str(i) + " \t" + str(angle_list[i]) +  " \t" + str(angle_list[i+1]) + " \t" + str(inc_list[i]) +"\n")
-file.close()
+title_list = ["point", "difference y", "nod1", "nod2", "increment"]
+index_list = [i+1 for i in range(length)]
+test_title = "testfile.txt"
+last_title = "auto_mesh.txt"
+if not check_h:
+    data_list = [index_list, 1, norm_list, 1, angle_list, 2, inc_list, 1]
+    write_list(data_list, test_title, title_list, length)
 
-file = open('auto_mesh.txt','w')
-for a in angle_list:
-    file.write(str(a) + "\n")
-file.close()
+    data_list = [angle_list, 1]
+    write_list(data_list, last_title, ["nod"], length+1)
+else:
+    add_title = ["difference x", "e1", "e2", "g1", "g2"]
 
-#scatter.plot(angle_list, [f(x) for x in angle_list], marker = 'o')
+    c = float(llist[10])
+    d = float(llist[11])
+    z, fz = define_funct(c,d)
+
+    flist = [fz(a) for a in angle_list]
+    data_list = [index_list,1,norm_list,1,angle_list,2, inc_list,1 ,norm_list_x,1,funct_list,2 ,flist,2]
+    write_list(data_list, test_title, title_list+ add_title, length)
+
+    data_list= [norm_list_x,1, funct_list,2 ,flist,2]
+    write_list(data_list, last_title, add_title, length)
+
+    print("sum --> " +str(sum(norm_list_x)))    
+
 scatter.plot(range(length), norm_list, marker = 'x')
 scatter.axhline(y=upper_bound, color='r', linestyle='-')
 scatter.axhline(y=lower_bound, color='r', linestyle='-')
@@ -114,8 +160,7 @@ def plot_graph(xaxis, yaxis, title, funct):
     scatter.title(title)
     scatter.draw()
 
-
-if not check_func:
+if check_d:
     plot_graph(angle_list, angle_list, 'derivative', fprime)
     scatter.figure()
 
