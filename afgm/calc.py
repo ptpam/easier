@@ -4,21 +4,82 @@ import numpy as np
 from math import pi, degrees, atan
 import matplotlib.pyplot as scatter
 
+# === Main Documentation ===
+
+# Reads the given file
+
+"""
+File format should be:
+
+- *f* for afgm \\ 
+    *d* for derivative \\
+    *h* for normal fgm
+- value of *a*
+- value of *b*
+- value of *n*
+- *t* for turn\\
+    *l* for length
+- value of turn or length
+- increment value, (pi is divided by the value for *t*)
+- divider for lower bound *f,h* , lower bound *d* 
+- divider for upper bound *f,h* , upper bound *d* 
+- upper limit for division (either 2\*pi\*turn or length is divided to this value)
+- [for *h*] value of c
+- [for *h*] value of d
+"""
 gen_path = input("Enter the path: ")
 define_file = open(gen_path , "r")
 line = define_file.readline()
 llist = re.split(r'\t+', line)
+
 check_func = False
 check_h = False
 
 def upper_bupper(ub, l, u):
+    """
+    Returns lower and upper bound limits
+    
+    **Parameters**
+
+    - **ub** 
+        check whether the first parameter 'f', 'd', or 'h'
+    - **l** 
+        lower bound, it is divided the difference (a-b) for 'f' & 'h', o/w it is taken as it is
+    - **u** 
+        lower bound, it is divided the difference (a-b) for 'f' & 'h', o/w it is taken as it is
+
+    **Returns** 
+
+    - **lower bound**
+    - **upper bound**
+
+    """
     if ub == 'd':
         return  l, u 
     else:
         diff = abs(a-b)
         return diff/l, diff/u
 
+
 def turn_length(tl, value ,delta):
+    """
+    Returns range and delta values
+    
+    **Parameters**
+
+    - **tl** 
+        checks whether the first parameter 't' or 'l'
+    - **value** \\
+        for *l* **value**, for *t* 2\*pi\*value 
+    - **delta** \\
+        for *l* **delta**, for *t* pi/**delta** 
+
+    **Returns** 
+
+    - ** 2\*pi\*turn** or **length** or **h**
+    - ** delta **
+
+    """    
     if tl == 't':
         return 2*pi*value, pi/delta   
     else:    
@@ -50,6 +111,21 @@ print(str(a) + " " + str(b)+ " " + str(n) + " " + str(upper_limit)+ " " +str(inc
 phi = Symbol('phi')
 
 def define_funct(a,b):
+    """
+    Returns function for given *a* and *b* values,
+    for the function format (a-b)(x)^n + b
+    
+    **Parameters**
+
+    - **a** 
+    - **b** 
+
+    **Returns** 
+
+    - ** y ** parameter for function
+    - ** f ** function itself
+
+    """     
     y = (a-b)*(((phi/limit) + add_x)**n) + b
     f = lambdify(phi, y, 'numpy')
     return y, f
@@ -60,9 +136,38 @@ yprime = y.diff(phi)
 fprime = lambdify(phi, yprime, 'numpy')
 
 def conv_deg(slope):
+    """
+    Returns angle in degrees for a given slope
+    
+    **Parameters**
+
+    - **slope** 
+
+    **Returns** 
+
+    - **degree**
+
+    """ 
     return degrees(atan(slope))
 
 def calc_norm(count, increment, funct):
+    """
+    Returns difference between two consecutive points
+    
+    **Parameters**
+
+    - **count** 
+        first point
+    - **increment** 
+        delta value to calculate the second point
+    - **funct** 
+        either function itself or its first derivative
+
+    **Returns** 
+
+    - ** difference **
+
+    """     
     square = funct(count)
     count += increment
     circle = funct(count)
@@ -74,25 +179,42 @@ def calc_norm(count, increment, funct):
         return 0
     return float(diff)
 
-def found_angle(count, increment):
-    if not check_d:
-        norm = calc_norm(count, increment, f)
-    else:
-        norm = calc_norm(count, increment, fprime)
+def found_angle(count, increment, funct):
+    """
+    Returns delta value 
+    
+    **Parameters**
+
+    - **count** 
+        first point
+    - **increment** 
+        delta value to calculate second point
+    - **funct** 
+        either function itself or its first derivative  
+
+    **Returns** 
+
+    - ** delta value **
+
+    """     
+    norm = calc_norm(count, increment, funct)
     if lower_bound <= norm and norm <= upper_bound:
         return inc_calc
     elif lower_bound > norm :
-        return found_angle(count,increment*2) * 2
+        return found_angle(count,increment*2, funct) * 2
     elif upper_bound < norm:
-        return found_angle(count, increment/3) / 3
+        return found_angle(count, increment/3, funct) / 3
 
 angle_list = list()
 increment = inc_calc
 
 inc_list = list()
+selected_funct = f
+if check_d:
+    selected_funct = fprime
 while count < upper_limit:
     angle_list.append(count)
-    inc = found_angle(count,increment)
+    inc = found_angle(count,increment, selected_funct)
     if inc > delta_limit:
         inc = delta_limit
     inc_list.append(inc)
@@ -131,7 +253,7 @@ if not check_h:
     write_list(data_list, test_title, title_list, length)
 
     data_list = [angle_list, 1]
-    write_list(data_list, last_title, ["nod"], length+1)
+    write_list(data_list, last_title, ["aci-l"], length+1)
 else:
     add_title = ["difference x", "e1", "e2", "g1", "g2"]
 
